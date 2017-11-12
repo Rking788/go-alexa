@@ -232,7 +232,15 @@ func (this *EchoResponse) ConfirmIntent(intentToConfirm string, updatedIntent *E
 
 func (this *EchoResponse) appendDirective(directive *DialogDirective) {
 	if this.Response.Directives == nil {
-		this.Response.Directives = make([]*DialogDirective, 0, 5)
+		this.Response.Directives = make([]interface{}, 0, 5)
+	}
+
+	this.Response.Directives = append(this.Response.Directives, directive)
+}
+
+func (this *EchoResponse) AppendAudioDirective(directive *AudioDirective) {
+	if this.Response.Directives == nil {
+		this.Response.Directives = make([]interface{}, 0, 5)
 	}
 
 	this.Response.Directives = append(this.Response.Directives, directive)
@@ -305,12 +313,28 @@ type DialogDirective struct {
 	UpdatedIntent   *EchoIntent `json:"updatedIntent,omitempty"`
 }
 
+type Stream struct {
+	Token    string `json:"token"`
+	URL      string `json:"url"`
+	OffsetMS int    `json:"offsetInMilliseconds"`
+}
+
+type AudioItem struct {
+	*Stream `json:"stream"`
+}
+
+type AudioDirective struct {
+	Type         string `json:"type"`
+	PlayBehavior string `json:"playBehavior"`
+	*AudioItem   `json:"audioItem"`
+}
+
 type EchoRespBody struct {
-	OutputSpeech     *EchoRespPayload   `json:"outputSpeech,omitempty"`
-	Card             *EchoRespPayload   `json:"card,omitempty"`
-	Reprompt         *EchoReprompt      `json:"reprompt,omitempty"` // Pointer so it's dropped ifempty in JSON response.
-	Directives       []*DialogDirective `json:"directives,omitempty"`
-	ShouldEndSession bool               `json:"shouldEndSession"`
+	OutputSpeech     *EchoRespPayload `json:"outputSpeech,omitempty"`
+	Card             *EchoRespPayload `json:"card,omitempty"`
+	Reprompt         *EchoReprompt    `json:"reprompt,omitempty"` // Pointer so it's dropped ifempty in JSON response.
+	Directives       []interface{}    `json:"directives,omitempty"`
+	ShouldEndSession bool             `json:"shouldEndSession"`
 }
 
 type EchoReprompt struct {

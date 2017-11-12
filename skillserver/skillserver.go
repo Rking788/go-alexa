@@ -11,6 +11,7 @@ import (
 	"encoding/json"
 	"encoding/pem"
 	"errors"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"log"
@@ -127,7 +128,10 @@ func HTTPError(w http.ResponseWriter, logMsg string, err string, errCode int) {
 // Decode the JSON request and verify it.
 func verifyJSON(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 	var echoReq *EchoRequest
-	err := json.NewDecoder(r.Body).Decode(&echoReq)
+	requestBytes, _ := ioutil.ReadAll(r.Body)
+	fmt.Printf("Request: %+v\n", string(requestBytes))
+	reader := bytes.NewReader(requestBytes)
+	err := json.NewDecoder(reader).Decode(&echoReq)
 	if err != nil {
 		HTTPError(w, err.Error(), "Bad Request", 400)
 		return
