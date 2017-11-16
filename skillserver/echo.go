@@ -246,6 +246,14 @@ func (this *EchoResponse) AppendAudioDirective(directive *AudioDirective) {
 	this.Response.Directives = append(this.Response.Directives, directive)
 }
 
+func (this *EchoResponse) AppendVideoDirective(directive *VideoDirective) {
+	if this.Response.Directives == nil {
+		this.Response.Directives = make([]interface{}, 0, 5)
+	}
+
+	this.Response.Directives = append(this.Response.Directives, directive)
+}
+
 func (this *EchoResponse) String() ([]byte, error) {
 	jsonStr, err := json.Marshal(this)
 	if err != nil {
@@ -327,6 +335,34 @@ type AudioDirective struct {
 	Type         string `json:"type"`
 	PlayBehavior string `json:"playBehavior"`
 	*AudioItem   `json:"audioItem"`
+}
+
+// "directives": [
+//  {
+// 	 "type": "VideoApp.Launch",
+// 	 "videoItem":
+// 	 {
+// 		 "source": "https://www.example.com/video/sample-video-1.mp4",
+// 		 "metadata": {
+// 			 "title": "Title for Sample Video",
+// 			 "subtitle": "Secondary Title for Sample Video"
+// 		 }
+// 	 }
+// }
+
+type VideoMetadata struct {
+	Title    string `json:"title"`
+	Subtitle string `json:"subtitle"`
+}
+
+type VideoItem struct {
+	Source string `json:"source"`
+	*VideoMetadata
+}
+
+type VideoDirective struct {
+	Type       string `json:"type"`
+	*VideoItem `json:"videoItem"`
 }
 
 type EchoRespBody struct {
