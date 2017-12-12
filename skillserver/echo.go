@@ -41,7 +41,8 @@ func (this *EchoRequest) VerifyTimestamp() bool {
 }
 
 func (this *EchoRequest) VerifyAppID(myAppID string) bool {
-	if this.Session.Application.ApplicationID == myAppID {
+	if this.Session.Application.ApplicationID == myAppID ||
+		this.Context.System.Application.ApplicationID == myAppID {
 		return true
 	}
 
@@ -295,6 +296,9 @@ type EchoContext struct {
 			DeviceId           string                 `json:"deviceId,omitempty"`
 			SupportedIntefaces map[string]interface{} `json:"supportedInterfaces,omitempty"`
 		} `json:"device,omitempty"`
+		Application struct {
+			ApplicationID string `json:"applicationId,omitempty"`
+		} `json:"application,omitempty"`
 	} `json:"System,omitempty"`
 }
 
