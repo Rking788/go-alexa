@@ -91,9 +91,9 @@ func (this *EchoRequest) GetIntentConfirmationStatus() ConfirmationStatus {
 // Response Functions
 func NewEchoResponse() *EchoResponse {
 	er := &EchoResponse{
-		Version: "1.0",
+		Version:  "1.0",
 		Response: EchoRespBody{
-			ShouldEndSession: true,
+		//ShouldEndSession: true,
 		},
 		SessionAttributes: make(map[string]interface{}),
 	}
@@ -181,7 +181,7 @@ func (this *EchoResponse) RepromptSSML(text string) *EchoResponse {
 	return this
 }
 
-func (this *EchoResponse) EndSession(flag bool) *EchoResponse {
+func (this *EchoResponse) EndSession(flag *bool) *EchoResponse {
 	this.Response.ShouldEndSession = flag
 
 	return this
@@ -192,7 +192,8 @@ func (this *EchoResponse) DialogDelegate(updatedIntent *EchoIntent) *EchoRespons
 		Type:          DialogDelegate,
 		UpdatedIntent: updatedIntent,
 	})
-	this.EndSession(false)
+	flag := false
+	this.EndSession(&flag)
 
 	return this
 }
@@ -203,7 +204,8 @@ func (this *EchoResponse) ElicitSlot(slotToElicit string, updatedIntent *EchoInt
 		SlotToElicit:  slotToElicit,
 		UpdatedIntent: updatedIntent,
 	})
-	this.EndSession(false)
+	flag := false
+	this.EndSession(&flag)
 
 	return this
 }
@@ -214,7 +216,8 @@ func (this *EchoResponse) ConfirmSlot(slotToConfirm string, updatedIntent *EchoI
 		SlotToConfirm: slotToConfirm,
 		UpdatedIntent: updatedIntent,
 	})
-	this.EndSession(false)
+	flag := false
+	this.EndSession(&flag)
 
 	return this
 }
@@ -225,7 +228,8 @@ func (this *EchoResponse) ConfirmIntent(intentToConfirm string, updatedIntent *E
 		IntentToConfirm: intentToConfirm,
 		UpdatedIntent:   updatedIntent,
 	})
-	this.EndSession(false)
+	flag := false
+	this.EndSession(&flag)
 
 	return this
 }
@@ -269,6 +273,7 @@ type EchoRequest struct {
 	Version string      `json:"version"`
 	Session EchoSession `json:"session"`
 	Request EchoReqBody `json:"request"`
+	Context EchoContext `json:"context"`
 }
 
 type EchoSession struct {
@@ -282,6 +287,15 @@ type EchoSession struct {
 		UserID      string `json:"userId"`
 		AccessToken string `json:"accessToken,omitempty"`
 	} `json:"user"`
+}
+
+type EchoContext struct {
+	System struct {
+		Device struct {
+			DeviceId           string                 `json:"deviceId,omitempty"`
+			SupportedIntefaces map[string]interface{} `json:"supportedInterfaces,omitempty"`
+		} `json:"device,omitempty"`
+	} `json:"System,omitempty"`
 }
 
 type EchoReqBody struct {
@@ -370,7 +384,7 @@ type EchoRespBody struct {
 	Card             *EchoRespPayload `json:"card,omitempty"`
 	Reprompt         *EchoReprompt    `json:"reprompt,omitempty"` // Pointer so it's dropped ifempty in JSON response.
 	Directives       []interface{}    `json:"directives,omitempty"`
-	ShouldEndSession bool             `json:"shouldEndSession"`
+	ShouldEndSession *bool            `json:"shouldEndSession,omitempty"`
 }
 
 type EchoReprompt struct {
