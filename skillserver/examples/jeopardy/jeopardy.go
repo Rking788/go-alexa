@@ -284,9 +284,9 @@ func getJeopardySession(col *mgo.Collection, sessid string) *JeopardySession {
 	return user
 }
 
-func (this *JeopardySession) Update(col *mgo.Collection) error {
-	this.UpdatedAt = time.Now().Unix()
-	err := col.Update(bson.M{"awsid": this.AWSID}, this)
+func (s *JeopardySession) Update(col *mgo.Collection) error {
+	s.UpdatedAt = time.Now().Unix()
+	err := col.Update(bson.M{"awsid": s.AWSID}, s)
 	if err != nil {
 		return err
 	}
@@ -294,8 +294,8 @@ func (this *JeopardySession) Update(col *mgo.Collection) error {
 	return nil
 }
 
-func (this *JeopardySession) Delete(col *mgo.Collection) error {
-	err := col.Remove(bson.M{"awsid": this.AWSID})
+func (s *JeopardySession) Delete(col *mgo.Collection) error {
+	err := col.Remove(bson.M{"awsid": s.AWSID})
 	if err != nil {
 		return err
 	}
